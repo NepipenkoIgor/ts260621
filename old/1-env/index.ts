@@ -16,7 +16,7 @@ function shipWeight() {
 function sendUpdates(emailAddr: string | string[]) {
     function sendEmail(addr: string) {
         // можно исполльзовать //@ts-ignore чтобы отключить проверку для любой строки
-        console.log(`Shipping to ${addr} via ${deliveryMethod() || 'standard'} delivery`);
+        console.log(`Shipping to ${addr} via ${deliveryMethod() | 'standard'} delivery`);
 
         if (shipWeight() > 100) {
             console.log('WARNING: Oversize package');
