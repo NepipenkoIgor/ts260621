@@ -1,33 +1,68 @@
-let v1 = 1 + 3;
-let v2 = 3 + 4;
+// T extends U ? Z : D
 
-function fn(a: number, b: number) {
-    return a + b;
+// type nonUndNull<T> = T extends undefined | null ? never : T;
+//
+// type sbu = string | boolean | undefined | null;
+//
+// const v: nonUndNull<sbu> = undefined
+//
+//
+interface IHydrantA {
+    type: 'a'
 }
 
-// Type/Interface/function/Class
-
-
-interface IAccount<Info extends { male: boolean } = { male: true }, Id = number> {
-    id: Id,
-    name: string
-    info: Info
+interface IHydrantB {
+    type: 'b'
 }
 
-const user: IAccount = {
-    id: 1,
-    name: 'Eugene',
-    info: {male: true}
+interface IHydrantC {
+    type: 'c'
 }
 
-const admin: IAccount<{ male: boolean, subjects: string[] }, string> = {
-    id: 'asdasd123123',
-    name: 'Eugene A',
-    info: {
-        male: true,
-        subjects: ['TS', 'React']
-    }
+//
+// type Hydrants = IHydrantA | IHydrantB | IHydrantC;
+//
+//
+// let h: Exclude<Hydrants, IHydrantA | IHydrantC> = {
+//     type: 'a'
+// }
+// type NonFunction<T> = T extends Function ? never : T;
+// type FunctionParamsReturnType<T extends Function> = T extends (...args: infer U) => infer Z
+//     ? NonFunction<U[Exclude<keyof U, 'length'>]> | Z
+//     : never
+//
+//
+// function fn1(_p: bigint): string {
+//     return 's';
+// }
+//
+// function fn2(_a: IHydrantA, _b: IHydrantB, _c: IHydrantC): string {
+//     return 's';
+// }
+//
+// const v1: FunctionParamsReturnType<typeof fn2> = true
+//
+//
+// const  arr = [1,2,3];
+// const v:  (typeof arr)[keyof typeof arr] = true
+
+
+// const arr1: [() => { a: number, b:number }, () => boolean];
+// type FirstReturnType<T> =
+//     T extends [infer U, ...unknown[]]
+//         ? U extends (...args: unknown[]) => infer R
+//            ? R
+//            : never
+//         : never
+//
+//
+// const v1: FirstReturnType<typeof arr1> = true;
+
+type flatten<T> = T extends Array<infer U> ? flatten<U> : T;
+
+function deepFlatten<Z extends unknown[]>(_p: Z): flatten<Z>[] {
+    throw new Error('')
 }
 
-
-let a: Array<number>
+const arr1: number[] = deepFlatten([[1, 2, 3], 2, [[2, 3, 3]]]);
+const arr12: number[] = deepFlatten([[1, 2, [23, 34]], 2, [[2, 3, 3]]]);
