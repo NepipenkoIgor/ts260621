@@ -1,68 +1,97 @@
-// T extends U ? Z : D
-
-// type nonUndNull<T> = T extends undefined | null ? never : T;
-//
-// type sbu = string | boolean | undefined | null;
-//
-// const v: nonUndNull<sbu> = undefined
-//
-//
-interface IHydrantA {
-    type: 'a'
+interface IUser {
+    name: string;
+    permission: string[];
+    male: boolean
 }
 
-interface IHydrantB {
-    type: 'b'
-}
-
-interface IHydrantC {
-    type: 'c'
-}
-
-//
-// type Hydrants = IHydrantA | IHydrantB | IHydrantC;
-//
-//
-// let h: Exclude<Hydrants, IHydrantA | IHydrantC> = {
-//     type: 'a'
-// }
-// type NonFunction<T> = T extends Function ? never : T;
-// type FunctionParamsReturnType<T extends Function> = T extends (...args: infer U) => infer Z
-//     ? NonFunction<U[Exclude<keyof U, 'length'>]> | Z
-//     : never
-//
-//
-// function fn1(_p: bigint): string {
-//     return 's';
+// interface IAdmin extends Omit<IUser, 'permission'> {
+//     permission: { [section: string]: string[] }
 // }
 //
-// function fn2(_a: IHydrantA, _b: IHydrantB, _c: IHydrantC): string {
-//     return 's';
+// type OptionalButReadonly<T> = {
+//    readonly [P in  keyof T]?: T[P]
 // }
 //
-// const v1: FunctionParamsReturnType<typeof fn2> = true
+//
+// const p: OptionalButReadonly<IUser> = {
+//     permission: ['add']
+// }
+//
+// p.permission = [];
+//
+// type KeysWithoutType<T, E> = {
+//     [P in keyof T]: T[P] extends E  ? never : P
+// }[keyof T]
 //
 //
-// const  arr = [1,2,3];
-// const v:  (typeof arr)[keyof typeof arr] = true
-
-
-// const arr1: [() => { a: number, b:number }, () => boolean];
-// type FirstReturnType<T> =
-//     T extends [infer U, ...unknown[]]
-//         ? U extends (...args: unknown[]) => infer R
-//            ? R
-//            : never
-//         : never
+// let k0: keyof IUser // 'name' | 'permission' | 'male'
+// const k: KeysWithoutType<IUser, string> = 'name' // 'permission' | 'male'
+//
+// type RemoveByFieldName<T,E> = {
+//     [P in keyof T as Exclude<P, E>]: T[P]
+// }
+//
+// const obj: RemoveByFieldName<IUser, 'permission' | 'name' > = {
+//     male: true,
+// }
 //
 //
-// const v1: FirstReturnType<typeof arr1> = true;
+// type CapitalizedKeysAndGetter<T> = {
+//     [P in keyof T as `get${Capitalize<P&string>}`]: ()=> T[P]
+// }
+//
+// const getUser: CapitalizedKeysAndGetter<IUser> = {
+//     getMale: ()=> true,
+//     getName: ()=> 'Ihor',
+//     getPermission: ()=> ['TS', 'Angular'],
+// }
 
-type flatten<T> = T extends Array<infer U> ? flatten<U> : T;
 
-function deepFlatten<Z extends unknown[]>(_p: Z): flatten<Z>[] {
-    throw new Error('')
+// conditional `value` depending on show=true
+
+// TODO overloads
+// type ConditionalResult<T, U, Z extends string> = T extends true ? Required<U> : Omit<U, Z>
+//
+// const test = <T extends boolean>(show: T) => {
+//     type result = ConditionalResult<T, { test: number, value?: () => string}, 'value'>;
+//     if (show) {
+//         return {
+//             test: 1,
+//             value: () => 'sss',
+//         } as result
+//     }
+//     return {
+//         test: 1
+//     } as result
+// }
+//
+// test(true);  // { test: number; value: () => string; }
+// test(false); // { test: number; }
+
+
+type TypedObject<T, U> = {
+    [P in keyof T as `${U & string}${string & P}`]: T[P]
 }
 
-const arr1: number[] = deepFlatten([[1, 2, 3], 2, [[2, 3, 3]]]);
-const arr12: number[] = deepFlatten([[1, 2, [23, 34]], 2, [[2, 3, 3]]]);
+const createSimpleReducer = <T extends string>(name: T) => {
+    const obj = {
+        Start: (): IUser => {
+            throw new Error()
+        },
+        Ok: () => {
+            return 's'
+        },
+        Fail: () => {
+            return true
+        }
+    }
+    type prefixedObj = TypedObject<typeof obj, T>;
+    const result = {} as any;
+    for (const [key, value] of Object.entries(obj)) {
+        result [`${name}${key}` as keyof prefixedObj] = value;
+    }
+    return result as prefixedObj
+};
+
+
+const v1: string = createSimpleReducer('foo').

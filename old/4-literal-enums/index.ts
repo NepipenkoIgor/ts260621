@@ -164,11 +164,11 @@ const values1: IFact['factId' | 'useTo'] // number | string;
 
 
 // TODO maybe later ?
-// const createSimpleReducer = (name: string) => ({ // type?
-//     [`${name}Start`]: () => { console.log(`${name}Start`) },
-//     [`${name}Ok`]: () => { /** ... */},
-//     [`${name}Fail`]: () => { /** ... */},
-// });
+const createSimpleReducer = (name: string) => ({ // type?
+    [`${name}Start`]: () => { console.log(`${name}Start`) },
+    [`${name}Ok`]: () => { /** ... */},
+    [`${name}Fail`]: () => { /** ... */},
+});
 //
 //
 // createSimpleReducer('test').
