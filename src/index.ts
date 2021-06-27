@@ -1,97 +1,100 @@
-interface IUser {
-    name: string;
-    permission: string[];
-    male: boolean
-}
+// function average(a: number, b: number, c: number): string {
+//     const avg = (a + b + c) / 3;
+//     return `Average is ${avg}`;
+// }
+//
+// average(1);
+// average(1, 2);
+// average(1, 2, '3');
+// const v: number = average(1, 2, 4);
 
-// interface IAdmin extends Omit<IUser, 'permission'> {
-//     permission: { [section: string]: string[] }
+// function average(a: number, b?: number, c?: number): string {
+//     if (b === undefined) {
+//         b = 0;
+//     }
+//     if (c === undefined) {
+//         c = 0;
+//     }
+//     const avg = (a + b + c) / 3;
+//     return `Average is ${avg}`;
 // }
 //
-// type OptionalButReadonly<T> = {
-//    readonly [P in  keyof T]?: T[P]
-// }
-//
-//
-// const p: OptionalButReadonly<IUser> = {
-//     permission: ['add']
-// }
-//
-// p.permission = [];
-//
-// type KeysWithoutType<T, E> = {
-//     [P in keyof T]: T[P] extends E  ? never : P
-// }[keyof T]
-//
-//
-// let k0: keyof IUser // 'name' | 'permission' | 'male'
-// const k: KeysWithoutType<IUser, string> = 'name' // 'permission' | 'male'
-//
-// type RemoveByFieldName<T,E> = {
-//     [P in keyof T as Exclude<P, E>]: T[P]
-// }
-//
-// const obj: RemoveByFieldName<IUser, 'permission' | 'name' > = {
-//     male: true,
-// }
-//
-//
-// type CapitalizedKeysAndGetter<T> = {
-//     [P in keyof T as `get${Capitalize<P&string>}`]: ()=> T[P]
-// }
-//
-// const getUser: CapitalizedKeysAndGetter<IUser> = {
-//     getMale: ()=> true,
-//     getName: ()=> 'Ihor',
-//     getPermission: ()=> ['TS', 'Angular'],
-// }
+// average(1);
+// average(1, 2);
+// average(1, 2, '3');
+// const v: number = average(1, 2, 4);
 
 
-// conditional `value` depending on show=true
-
-// TODO overloads
-// type ConditionalResult<T, U, Z extends string> = T extends true ? Required<U> : Omit<U, Z>
+// function average(a: number, b = 0, c = 0): Promise<string> {
+//     const avg = (a + b + c) / 3;
+//     return Promise.resolve().then(() => `Average is ${avg}`);
+// }
 //
-// const test = <T extends boolean>(show: T) => {
-//     type result = ConditionalResult<T, { test: number, value?: () => string}, 'value'>;
+// average(1);
+// average(1, 2);
+// average(1, 2, '3');
+// const v: number = average(1, 2, 4);
+
+
+// function isString(arg: string | number): arg is string {
+//     return typeof arg === 'string';
+// }
+//
+//
+// function average(a: string, b: number): string
+// function average(a: number, b: string): string
+// function average(a: number, b: number, c: number): string
+// function average(...args: (number | string)[]): string {
+//     let total = 0;
+//     for (const arg of args) {
+//         if (isString(arg)) {
+//             total += Number(arg);
+//             continue;
+//         }
+//         total += arg;
+//     }
+//     const avg = total / args.length;
+//     return `Average is ${avg}`;
+// }
+//
+// average(1);
+// average('1', 2);
+// average(1, '2');
+// average(1, 2, '3');
+// average(1, 2);
+// average(1, '2', '3');
+// average(1, 2, 1);
+// average(1, 2, 1, 3, 4);
+// const v: string = average(1, 2, 4);
+//
+//
+
+// interface IA { test: number, value?: () => string; }
+//
+// function test(show: true): Required<IA>;
+// function test(show: false): Exclude<IA, 'value'>;
+// function test(show: boolean): IA {
 //     if (show) {
 //         return {
 //             test: 1,
 //             value: () => 'sss',
-//         } as result
+//         }
 //     }
 //     return {
 //         test: 1
-//     } as result
+//     }
 // }
 //
-// test(true);  // { test: number; value: () => string; }
-// test(false); // { test: number; }
+// test(true).value()  // { test: number; value: () => string; }
+// test(false).test // { test: number; }
 
 
-type TypedObject<T, U> = {
-    [P in keyof T as `${U & string}${string & P}`]: T[P]
-}
-
-const createSimpleReducer = <T extends string>(name: T) => {
-    const obj = {
-        Start: (): IUser => {
-            throw new Error()
-        },
-        Ok: () => {
-            return 's'
-        },
-        Fail: () => {
-            return true
-        }
-    }
-    type prefixedObj = TypedObject<typeof obj, T>;
-    const result = {} as any;
-    for (const [key, value] of Object.entries(obj)) {
-        result [`${name}${key}` as keyof prefixedObj] = value;
-    }
-    return result as prefixedObj
-};
-
-
-const v1: string = createSimpleReducer('foo').
+// function getFullName(this: { name: string, surname: string }) {
+//     return `${this.name} ${this.surname}`;
+// }
+//
+// const account = {
+//     name: 'Ihor',
+//     surname: 'Nepipenko',
+//     getFullName
+// }
