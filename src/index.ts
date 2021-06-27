@@ -1,100 +1,46 @@
-// function average(a: number, b: number, c: number): string {
-//     const avg = (a + b + c) / 3;
-//     return `Average is ${avg}`;
-// }
-//
-// average(1);
-// average(1, 2);
-// average(1, 2, '3');
-// const v: number = average(1, 2, 4);
+import { CheckTypeInRunTime, Debounce, LogInputValue, Validate, Range } from './decorators';
 
-// function average(a: number, b?: number, c?: number): string {
-//     if (b === undefined) {
-//         b = 0;
-//     }
-//     if (c === undefined) {
-//         c = 0;
-//     }
-//     const avg = (a + b + c) / 3;
-//     return `Average is ${avg}`;
-// }
-//
-// average(1);
-// average(1, 2);
-// average(1, 2, '3');
-// const v: number = average(1, 2, 4);
+class SearchComponent {
 
+    //@SavePersistence
+    @CheckTypeInRunTime
+    public initialValue!: string;
 
-// function average(a: number, b = 0, c = 0): Promise<string> {
-//     const avg = (a + b + c) / 3;
-//     return Promise.resolve().then(() => `Average is ${avg}`);
-// }
-//
-// average(1);
-// average(1, 2);
-// average(1, 2, '3');
-// const v: number = average(1, 2, 4);
+    public constructor(
+        private readonly inputEl: HTMLInputElement
+    ) {
+        console.log(this.initialValue);
+        this.inputEl.addEventListener('input', this.onSearch.bind(this))
+    }
+
+    @Debounce(300)
+    @LogInputValue
+    private onSearch(this: this, _e: Event) {
+        this.initialValue = (_e.target as HTMLInputElement).value;
+    }
+}
+
+const inputEl = document.querySelector('input') as HTMLInputElement;
+const s = new SearchComponent(inputEl);
+
+setTimeout(() => {
+    (s.initialValue as any) = 1231231;
+}, 5000)
 
 
-// function isString(arg: string | number): arg is string {
-//     return typeof arg === 'string';
-// }
-//
-//
-// function average(a: string, b: number): string
-// function average(a: number, b: string): string
-// function average(a: number, b: number, c: number): string
-// function average(...args: (number | string)[]): string {
-//     let total = 0;
-//     for (const arg of args) {
-//         if (isString(arg)) {
-//             total += Number(arg);
-//             continue;
-//         }
-//         total += arg;
-//     }
-//     const avg = total / args.length;
-//     return `Average is ${avg}`;
-// }
-//
-// average(1);
-// average('1', 2);
-// average(1, '2');
-// average(1, 2, '3');
-// average(1, 2);
-// average(1, '2', '3');
-// average(1, 2, 1);
-// average(1, 2, 1, 3, 4);
-// const v: string = average(1, 2, 4);
-//
-//
+class Calculator {
+    @Validate
+    public updatePercentage(
+        _oldValue: number,
+        @Range(30, 70) _newValue: number
+    ): void {
+        console.log(_oldValue, _newValue)
+    }
+}
 
-// interface IA { test: number, value?: () => string; }
-//
-// function test(show: true): Required<IA>;
-// function test(show: false): Exclude<IA, 'value'>;
-// function test(show: boolean): IA {
-//     if (show) {
-//         return {
-//             test: 1,
-//             value: () => 'sss',
-//         }
-//     }
-//     return {
-//         test: 1
-//     }
-// }
-//
-// test(true).value()  // { test: number; value: () => string; }
-// test(false).test // { test: number; }
+const calc = new Calculator();
+calc.updatePercentage(0, 50);
 
-
-// function getFullName(this: { name: string, surname: string }) {
-//     return `${this.name} ${this.surname}`;
-// }
-//
-// const account = {
-//     name: 'Ihor',
-//     surname: 'Nepipenko',
-//     getFullName
-// }
+setTimeout(()=>{
+    calc.updatePercentage(50, 80);
+}, 7000)
